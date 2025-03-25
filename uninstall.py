@@ -7,6 +7,9 @@ import logging
 # Configure logging
 logging.basicConfig(filename="uninstall.log", level=logging.INFO, format="%(asctime)s - %(message)s")
 
+# Variable to define the software name to remove (overrides command-line argument if set)
+PREDEFINED_SOFTWARE_NAME = ""  # Example: "firefox"
+
 # Dictionary for additional uninstall parameters for specific software
 EXTRA_UNINSTALL_PARAMS = {
     "firefox": "-ms",
@@ -171,17 +174,23 @@ def uninstall_via_dism_auto(target_keyword):
         log_action(f"Error during DISM execution: {e}")
 
 if __name__ == "__main__":
-    if len(sys.argv) < 2:
-        print("Usage: py uninstall.py \"software_name\"")
-        print("Examples:")
-        print("  py uninstall.py firefox")
-        print("  py uninstall.py paint")
-        sys.exit(1)
+    # Check if the predefined software name is set
+    if PREDEFINED_SOFTWARE_NAME:
+        target_software = PREDEFINED_SOFTWARE_NAME.strip()
+        print(f"Using predefined software name: '{target_software}'")
+        log_action(f"Using predefined software name: '{target_software}'")
+    else:
+        if len(sys.argv) < 2:
+            print("Usage: py uninstall.py \"software_name\"")
+            print("Examples:")
+            print("  py uninstall.py firefox")
+            print("  py uninstall.py paint")
+            sys.exit(1)
 
-    target_software = sys.argv[1].strip()
-    if not target_software:
-        print("Error: Software name cannot be empty.")
-        sys.exit(1)
+        target_software = sys.argv[1].strip()
+        if not target_software:
+            print("Error: Software name cannot be empty.")
+            sys.exit(1)
 
     print(f"\nSearching for software '{target_software}' to remove...\n")
     log_action(f"Searching for software '{target_software}' to remove...")
